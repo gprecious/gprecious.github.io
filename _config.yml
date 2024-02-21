@@ -30,7 +30,7 @@ url: "" # the base hostname & protocol for your site, e.g. http://example.com
 github_username: gprecious
 
 # Build settings
-remote_theme: "mmistakes/minimal-mistakes@4.24.0"
+theme: minimal-mistakes-jekyll
 plugins:
   - jekyll-feed
   - jekyll-remote-theme
@@ -54,3 +54,15 @@ plugins:
 #   - vendor/cache/
 #   - vendor/gems/
 #   - vendor/ruby/
+
+defaults:
+  # _posts
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: single
+      read_time: true
+      comments: true
+      share: true
+      related: true
