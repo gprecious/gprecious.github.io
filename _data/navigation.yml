@@ -1,0 +1,12 @@
+# main links
+main:
+  - title: "트레이너스"
+    url: https://trainers.kr
+  - title: "About"
+    url: https://mmistakes.github.io/minimal-mistakes/about/
+  - title: "Posts"
+    url: /daily/
+  - title: "Sample Collections"
+    url: /collection-archive/
+  - title: "Sitemap"
+    url: /sitemap/
