@@ -1,0 +1,134 @@
+---
+title: "2024-03-06"
+date: 2024-03-06 18:00:00 +0900
+categories: DAILY
+---
+
+widget argument 는 제일 마지막으로 전달
+
+sized box 는 다른 위젯과 다르게 width, height 가 고정된다.
+즉, 안의 컨텐츠가 잘려서 보일 수도 있다는 것이다.
+
+다른 위젯은 기본적으로 내부 컨텐츠에 맞춰 크기가 조절된다.
+텍스트, 컨테이너 등이 이에 해당된다.
+
+widget 내부에서 state 가 바뀐다면 stateful 위젯 을 상속 받아야 한다.
+
+> [!warning]
+> state 가 변하는 부분만 따로 분리해서 stateful widget 으로 만들자.
+> state 가 변하지 않는 부분까지 포함되면 최적화에 좋지 않다.
+> 리팩터링 측면에서도 마찬가지
+
+stateful 위젯 을 사용할 때는 state 위젯 과 stateful 위젯 2개를 사용해야 한다.
+
+```dart
+class DiceRoller extends StatefulWidget {
+	// build 대신 createState 를 써야한다.
+	// component 를 build 하는게 아니라 state 를 관리하는 클래스이기 때문이다.
+	State<DiceRoller> createState() {
+		return _DiceRollerState
+	}
+}
+```
+
+~~이렇게 처리하는 이유는 flutter 가 stateful 위젯 을 상위 컴포넌트에서 const 로 처리하기 위함이다.~~
+Stateful 위젯은 immutable 하지만 mutable 한 state 에 의해 상태가 관리된다.
+react 에 익숙하다면 useState 사용예시를 떠올려 보라.
+
+그리고 \_DiceRollerState 클래스에 실제 로직이 들어간다.
+
+```dart
+class _DiceRollerState extends State<DiceRoller> {
+	//setState
+	void rollDice() {
+		setState(() {
+			activeImage = 'imagePath';
+		});
+	}
+	@override
+	Widget build(context) {}
+}
+```
+
+StatefulWidget 클래스가 State 를 한번 감싸는 형태이다.
+
+그리고 중요한 것은 react 와 마찬가지로 setState 를 통해 state 를 바꿔줘야 컴포넌트가 re-build (re-rendering) 된다는 것이다.
+
+13:32
+문자열 안에 $변수명 을 쓰면 javascript 의 ${} 와 동일한 효과를 낸다.
+
+불필요한 object 생성, 삭제를 막기 위해 static 메소드 실행을 위한 instance 를 class 외부에 생성하자.
+
+```dart
+// const 가 아니라 final 인 이유는 runtime 에 정해지는 값이기 때문이다.
+// new 생략 가능
+final randomizer = Random();
+
+class blahblah () {
+	void blah() {
+		randomizer.nextInt(10);
+	}
+}
+```
+
+14:30
+
+state 위젯에서 widget 을 이용해, 연결된 StatefulWidget 에 접근 가능하다.
+
+```dart
+class _DiceRollerState extends State<DiceRoller> {
+	// DiceRoller 에서 받은 text 에 접근
+	widget.text
+}
+```
+
+flutter run 이후 console 에서 p 키 누르면 debug painting (wireframe) 이 나온다.
+
+16:33
+vs code 에서 포매팅 이상하게 되면 괄호 닫히는 곳 앞에 콤마를 추가하라
+
+class 인스턴스화 할 때, const 붙이면 instance 를 재사용한다.
+
+19:49
+WIdget 타입 변수를 만들고 setState 로 위젯을 바꿔주는 방식으로 화면을 전환
+
+```dart
+
+
+class _DiceRollerState extends State<DiceRoller> {
+	Widget currentScreen = const StartScreen();
+
+	void changeScreen () {
+		setState() {
+			currentScreen = const NextScreen();
+		}
+	}
+	@override
+	Widget build(context) {}
+}
+```
+
+[[react.js]] 에서 부모 컴포넌트에서 state 를 생성해 자식 컴포넌트에서 사용하는 것과 동일한 방식으로 state 를 활용한다.
+컴포넌트 기반 프레임워크에서 공통적으로 사용하는 방식
+
+21:26
+initState 는 생성자 호출 후, 객체가 메모리에 올라간 이후 실행된다.
+그리고 build 메소드가 실행되기 전에 실행된다. 그래서 setState 를 굳이 쓸필요가 없다.
+class 에 선언된 메소드를 property 에서 사용하는 경우, 에러가 발생한다.
+
+22:01
+dart 의 list 에서는 condition 구문을 사용해 요소를 대입할 수 있다.
+
+```dart
+final myList = [
+					1,
+					2,
+					if(condition)
+						3
+					else
+						4,
+						5
+				];
+```
+
+Column 같이 children 을 배열로 받는 컴포넌트에서 유용하게 사용이 가능할 것 같다.
